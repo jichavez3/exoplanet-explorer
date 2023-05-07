@@ -7,6 +7,8 @@ Instructions:
 (2) Use developer tools to determine if the planets are being fetched in series or in parallel.
  */
 
+// const { create } = require("browser-sync");
+
 // Inline configuration for jshint below. Prevents `gulp jshint` from failing with quiz starter code.
 /* jshint unused: false */
 
@@ -64,9 +66,17 @@ Instructions:
      */
     getJSON('../data/earth-like-results.json')
     .then(function(response) {
+      var seq = Promise.resolve();
+
       response.results.forEach(function(url) {
-        getJSON(url).then(createPlanetThumb);
+        seq.then(function(){
+          return getJSON(url)
+        })
+        .then(createPlanetThumb);
+        });
+      })
+      .catch(function(error){
+        console.log(error);
       });
-    });
   });
 })(document);
